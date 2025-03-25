@@ -15,5 +15,6 @@ public:
     void StopAudio();
     void PauseAudio();
     void ResumeAudio();
+    static void PlaySFX(const char* fileName, int volume);
 };
 #endif //AUDIO_H

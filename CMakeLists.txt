@@ -16,12 +16,16 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/game.cpp
         scripts/gameObject.h
         scripts/gameObject.cpp
-        scripts/tile.h
-        scripts/tile.cpp
         scripts/physics.cpp
         scripts/physics.h
         scripts/ball.cpp
-        scripts/ball.h)
+        scripts/ball.h
+        scripts/map.h
+        scripts/map.cpp
+        scripts/globalVar.h
+        scripts/globalVar.cpp
+        scripts/textRenderer.h
+        scripts/textRenderer.cpp)
 
 # --- SDL2 SETUP ---
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)

@@ -1,21 +1,12 @@
 #include "audio.h"
 #include "entity.h"
 #include "game.h"
-#include <iostream>
 #include <cmath>
-#include <vector>
-
-const int SCREEN_WIDTH = 960;
-const int SCREEN_HEIGHT = 640;
-const int midX = SCREEN_WIDTH / 2, midY = SCREEN_HEIGHT / 2, veloY = 5;
-
-
-
 
 int main(int argc , char* argv[])
 {
     Game *game = new Game();
-    game->init("mmb", SCREEN_WIDTH, SCREEN_HEIGHT);
+    game->init();
     // Load bgm
     Audio("resources/sfx/bg.mp3", -1, 10);
 
@@ -25,8 +16,9 @@ int main(int argc , char* argv[])
         game->update();
         game->render();
 
-        SDL_Delay(20);
+        SDL_Delay(1000 / 60);
     }
     game->clean();
+    delete game;
     return 0;
 }

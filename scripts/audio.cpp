@@ -32,6 +32,13 @@ void Audio::ResumeAudio()
     Mix_ResumeMusic();
 }
 
+void Audio::PlaySFX(const char* fileName, int volume)
+{
+    Mix_Chunk *sfx = Mix_LoadWAV(fileName);
+    Mix_PlayChannel(-1, sfx, 0);
+    Mix_VolumeChunk(sfx, volume);
+}
+
 
 
 

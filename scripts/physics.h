@@ -9,8 +9,13 @@
 #include "game.h"
 #include "gameObject.h"
 
+class Physics {
+public:
+    static bool isCollision(const SDL_Rect& rect1, const SDL_Rect& rect2);
+    static void reflect(SDL_Rect& rect, double& veloX, double& veloY, const SDL_Rect& boundary);
+    static void reflectObject(SDL_Rect& rect, double& veloX, double& veloY, const SDL_Rect& object);
 
+};
 
+#endif // PHYSICS_H
 
-
-#endif //PHYSICS_H

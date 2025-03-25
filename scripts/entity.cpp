@@ -3,7 +3,6 @@
 //
 #include "entity.h"
 #include <SDL.h>
-#include <SDL_image.h>
 
 Entity::Entity(Vector pos, SDL_Texture *texture): pos(pos), texture(texture)
 {
