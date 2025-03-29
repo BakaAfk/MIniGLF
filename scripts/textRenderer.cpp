@@ -5,6 +5,8 @@
 #include "textRenderer.h"
 #include <iostream>
 
+TTF_Font *TextRenderer::font = nullptr;
+
 TextRenderer::TextRenderer() {
     if (TTF_Init() == -1) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to initialize TTF", nullptr);
@@ -22,6 +24,9 @@ TextRenderer::~TextRenderer() {
 }
 
 void TextRenderer::renderText(SDL_Renderer *renderer, const std::string& text, int x, int y, int size, SDL_Color color) {
+    if (!font) {
+        return;
+    }
     SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 

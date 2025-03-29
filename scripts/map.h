@@ -15,19 +15,16 @@ public:
     Ball* getBall() { return ball; }
     void removeBall() { delete ball; ball = nullptr; }
     void drawTile();
-    void spawnObjects();  // Hàm spawn block, hole, ball
+    void spawnObjects();
     static void checkCollisionWithObject(SDL_Rect& ballRect, double veloX, double veloY);
-    static bool isHole(const SDL_Rect& ballRect, const Vector& prevPos, const Vector& currPos);
-    static int arr[20][30];  // Biến mảng thành static
+    static int arr[MAP_ROWS][MAP_COLS];
     static void resetOccupiedPositions();
     static void resetMap();
+    static std::set<std::pair<int, int>> occupiedPositions;
+    static bool isOccupied(int x, int y);
 private:
     SDL_Texture *blockTexture, *tile1, *tile2, *hole;
     Ball *ball;
-
-
-    static std::set<std::pair<int, int>> occupiedPositions;
-    static bool isOccupied(int x, int y); // Chuyển thành static
 
     SDL_Rect src, dist;
 };

@@ -9,7 +9,7 @@
 #include "ball.h"
 #include "map.h"
 
-Ball::Ball(Vector position, SDL_Texture *texture) : Entity(position, texture) {
+Ball::Ball(Vector position){
     this->position = position;
     ball = TextureLoader::loadTexture("resources/img/ball.png");
     src.x = src.y = 0;
@@ -44,7 +44,7 @@ void Ball::update() {
     Vector currPos = {(double)dist.x, (double)dist.y};  // Lưu vị trí sau khi di chuyển
 
     // Nếu bóng đi qua lỗ
-    if (Map::isHole(dist, prevPos, currPos) || win == true) {
+    if (Physics::isHole(dist, prevPos, currPos) || win == true) {
         win = true;
 
         // Xác định tâm của lỗ

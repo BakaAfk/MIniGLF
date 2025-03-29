@@ -8,4 +8,4 @@ int stroke = 0;
 int totalStroke = 0;
 double avgStroke = 0;
 int mapCount = 1;
-const char *TITLE = "Mini Golf beta v1.1";
+const char *TITLE = "Mini Golf beta v2.0";

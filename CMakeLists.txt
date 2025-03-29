@@ -8,8 +8,6 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/vector.h
         scripts/audio.cpp
         scripts/audio.h
-        scripts/entity.cpp
-        scripts/entity.h
         scripts/textureLoadeer.cpp
         scripts/textureLoader.h
         scripts/game.h
@@ -25,7 +23,10 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/globalVar.h
         scripts/globalVar.cpp
         scripts/textRenderer.h
-        scripts/textRenderer.cpp)
+        scripts/textRenderer.cpp
+        scripts/gameRenderer.h
+        scripts/gameRenderer.cpp
+)
 
 # --- SDL2 SETUP ---
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)

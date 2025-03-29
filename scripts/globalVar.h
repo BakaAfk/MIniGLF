@@ -22,10 +22,11 @@ extern int stroke;
 extern int totalStroke;
 extern double avgStroke;
 extern int mapCount;
-enum GameState {
+typedef enum GameState {
     START_SCREEN,
     PLAYING,
     PAUSE,
+    GAME_OVER,
     EXIT
-};
+} GameState;
 #endif //GLOBALVAR_H

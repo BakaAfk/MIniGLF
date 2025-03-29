@@ -17,6 +17,7 @@ Audio::Audio(const char* fileName, int loop, int volume)
     Mix_VolumeMusic(volume);
 }
 
+
 void Audio::StopAudio()
 {
     Mix_HaltMusic();

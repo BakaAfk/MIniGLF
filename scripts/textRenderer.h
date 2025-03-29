@@ -14,10 +14,10 @@ public:
     TextRenderer();
     ~TextRenderer();
 
-    void renderText(SDL_Renderer *renderer, const std::string& text, int x, int y, int size, SDL_Color color);
-    void renderTextCenter(SDL_Renderer *renderer, const std::string& text, int x, int y, int size, SDL_Color color);
+    static void renderText(SDL_Renderer *renderer, const std::string& text, int x, int y, int size, SDL_Color color);
+    static void renderTextCenter(SDL_Renderer *renderer, const std::string& text, int x, int y, int size, SDL_Color color);
 private:
-    TTF_Font *font;
+    static TTF_Font *font;
 };
 
 #endif //TEXTRENDERER_H

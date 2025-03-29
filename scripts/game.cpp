@@ -7,6 +7,8 @@
 #include "game.h"
 #include "textureLoader.h"
 #include "textRenderer.h"
+#include "globalVar.h"
+#include "gameRenderer.h"
 #include "map.h"
 #include "vector.h"
 #include "audio.h"
@@ -25,14 +27,34 @@ Game::~Game() {
     clean();
 }
 
+GameState Game::getState() {
+    return gameState;
+}
+
+void Game::setState(GameState state) {
+    gameState = state;
+}
+
+void Game::resetStat() {
+    stroke = 0;
+    totalStroke = 0;
+    avgStroke = 0;
+    mapCount = 1;
+    delete map;
+    map = new Map();
+}
 void Game::init() {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
         window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH ,SCREEN_HEIGHT , 0);
         renderer = SDL_CreateRenderer(window, -1, 0);
+        if (TTF_Init() == -1) {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Failed to initialize TTF", nullptr);
+        }
         if (renderer) {
             SDL_SetRenderDrawColor(renderer, 132, 171, 60, 255);
         }
         running = true;
+        gameState = START_SCREEN;
     }
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     map = new Map();
@@ -47,21 +69,46 @@ void Game::handleEvent() {
             running = false;
         break;
 
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym) {
+                case SDLK_ESCAPE:
+                    if (getState() == PLAYING) {
+                        setState(PAUSE);
+                    } else if (getState() == PAUSE) {
+                        setState(PLAYING);
+                    } else if (getState() == START_SCREEN) {
+                        setState(EXIT);
+                    }
+                break;
+
+                case SDLK_RETURN:
+                    if (getState() == START_SCREEN) {
+                        setState(PLAYING);
+                    } else if (getState() == GAME_OVER) {
+                        resetStat();
+                        setState(START_SCREEN);
+                    } else if (getState() == PAUSE) {
+                        setState(GAME_OVER);
+                    }
+                break;
+            }
+        break;
+
         case SDL_MOUSEBUTTONDOWN:
-            if (map->getBall() && map->getBall()->velocity.x == 0 && map->getBall()->velocity.y == 0) {
+            if (getState() == PLAYING && map->getBall() && map->getBall()->velocity.x == 0 && map->getBall()->velocity.y == 0) {
                 SDL_GetMouseState(&startX, &startY);
                 isDragging = true;
             }
         break;
 
         case SDL_MOUSEMOTION:
-            if (isDragging) {
+            if (getState() == PLAYING && isDragging) {
                 SDL_GetMouseState(&endX, &endY);
             }
         break;
 
         case SDL_MOUSEBUTTONUP:
-            if (isDragging) {
+            if (getState() == PLAYING && isDragging) {
                 isDragging = false;
                 SDL_GetMouseState(&endX, &endY);
 
@@ -104,47 +151,23 @@ void Game::update() {
 
 void Game::render() {
     SDL_RenderClear(renderer);
-    if (map) {
-        map->drawTile();
-        map->getBall()->drawBall();
+    switch (gameState) {
+        case START_SCREEN:
+            GameRenderer::renderMainScreen();
+            break;
+        case PLAYING:
+            GameRenderer::renderPlayingScreen(isDragging, map, map->getBall(), endX, endY);
+            break;
+        case PAUSE:
+            GameRenderer::renderPauseScreen();
+            break;
+        case GAME_OVER:
+            GameRenderer::renderGameOver();
+            break;
+        case EXIT:
+            running = false;
+            break;
     }
-
-
-    // Vẽ mũi tên chỉ hướng
-    if (isDragging && map->getBall() && map->getBall()->velocity.x == 0 && map->getBall()->velocity.y == 0) {
-        float dx = map->getBall()->dist.x + BALL_SIZE / 2 - endX;
-        float dy = map->getBall()->dist.y + BALL_SIZE / 2 - endY;
-
-        // Tính góc quay của mũi tên
-        float angle = atan2(dy, dx) * 180 / M_PI + 90;
-
-        // Tính hệ số độ dài mũi tên
-        float multiplier = std::min(sqrt(dx * dx + dy * dy) / 4, 30.0) / 10.0;
-        SDL_Rect arrowRect = {
-            static_cast<int>(map->getBall()->dist.x + BALL_SIZE / 2 - 8),  // Căn giữa theo chiều ngang
-            static_cast<int>(map->getBall()->dist.y + BALL_SIZE / 2 - 32 * multiplier),  // Căn chỉnh dọc
-            16, static_cast<int>(64 * multiplier)   // Điều chỉnh chiều dài theo lực kéo
-        };
-
-        // Load texture mũi tên
-        SDL_Texture* arrowTexture = TextureLoader::loadTexture("resources/img/point.png");
-        if (arrowTexture) {
-            SDL_RenderCopyEx(renderer, arrowTexture, nullptr, &arrowRect, angle, nullptr, SDL_FLIP_NONE);
-            SDL_DestroyTexture(arrowTexture);
-        }
-    }
-
-    std::string mapText = "Map: " + std::to_string(mapCount);
-    textRenderer.renderText(renderer, mapText, 10, 10, 24, WHITE);
-
-    std::string strokeText = "Stroke: " + std::to_string(stroke);
-    textRenderer.renderTextCenter(renderer, strokeText, SCREEN_WIDTH / 2, 10, 24, WHITE);
-
-    // round to 2 decimal places
-    avgStroke = totalStroke / (double)mapCount;
-    std::string avgStrokeText = "Avg. Stroke: " + std::to_string(avgStroke);
-    textRenderer.renderText(renderer, avgStrokeText, SCREEN_WIDTH - 200, 10, 24, WHITE);
-    SDL_RenderPresent(renderer);
 }
 
 void Game::clean() {
@@ -154,8 +177,10 @@ void Game::clean() {
         delete map;
         map = nullptr;
     }
+    Mix_CloseAudio();
     SDL_Quit();
     TTF_Quit();
+
 }
 
 bool Game::isRunning() {

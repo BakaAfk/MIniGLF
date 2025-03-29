@@ -10,7 +10,6 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "entity.h"
 #include "physics.h"
 #include "globalVar.h"
 #include "textRenderer.h"
@@ -29,6 +28,7 @@ private:
     double angle = 0;
     bool isDragging = false;
     TextRenderer textRenderer;
+    GameState gameState;
 
 
 public:
@@ -40,7 +40,10 @@ public:
     bool isRunning();
     void render();
     void clean();
+    GameState getState();
+    void setState(GameState state);
     static void resetDragging();
+    void resetStat();
 
     static SDL_Renderer *renderer;
     static SDL_Event event;

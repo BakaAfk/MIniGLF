@@ -6,25 +6,18 @@
 #define BALL_H
 #pragma once
 #include "vector.h"
-#include "entity.h"
-class Ball : public Entity
+class Ball
 {
 private:
     SDL_Texture *ball;
-
-
 public:
-
     bool win = false;
-    Ball(Vector position, SDL_Texture *texture);
+    Ball(Vector position);
     ~Ball();
     void drawBall();
     void update();
     Vector velocity, position;
     SDL_Rect src, dist;
-
-
-
 };
 
 #endif //BALL_H

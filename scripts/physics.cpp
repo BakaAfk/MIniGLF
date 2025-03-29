@@ -50,3 +50,36 @@ void Physics::reflectObject(SDL_Rect& rect, double& veloX, double& veloY, const 
     }
 
 }
+
+bool Physics::isHole(const SDL_Rect& ballRect, const Vector& prevPos, const Vector& currPos) {
+    for (int i = 0; i < MAP_ROWS; i++) {
+        for (int j = 0; j < MAP_COLS; j++) {
+            if (Map::arr[i][j] == 2) {  // 2 = Hole
+                SDL_Rect holeRect = {j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+
+                // Tọa độ tâm của lỗ
+                float holeX = holeRect.x + holeRect.w / 2;
+                float holeY = holeRect.y + holeRect.h / 2;
+
+                // Tọa độ di chuyển của bóng
+                float x1 = prevPos.x + ballRect.w / 2;
+                float y1 = prevPos.y + ballRect.h / 2;
+                float x2 = currPos.x + ballRect.w / 2;
+                float y2 = currPos.y + ballRect.h / 2;
+
+                // Khoảng cách từ lỗ đến đường di chuyển của bóng
+                float A = y2 - y1;
+                float B = x1 - x2;
+                float C = x2 * y1 - x1 * y2;
+
+                float distance = std::abs(A * holeX + B * holeY + C) / sqrt(A * A + B * B);
+
+                // Nếu khoảng cách từ đường đi của bóng đến tâm lỗ nhỏ hơn bán kính lỗ, coi như vào lỗ
+                if (distance <= TILE_SIZE / 2 && Physics::isCollision(ballRect, holeRect)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
