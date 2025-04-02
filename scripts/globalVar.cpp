@@ -3,9 +3,11 @@
 //
 #include "globalVar.h"
 
-// Chỉ định nghĩa biến toàn cục tại đây (duy nhất 1 lần)
+
+// Global variables
 int stroke = 0;
 int totalStroke = 0;
 double avgStroke = 0;
 int mapCount = 1;
+bool muteBG = false;
 const char *TITLE = "Mini Golf beta v2.0";

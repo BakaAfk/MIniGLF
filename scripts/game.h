@@ -1,35 +1,23 @@
 //
 // Created by Baka-tannn on 21/2/2025.
 //
-#pragma once
+
+#ifndef GAME_H
+#define GAME_H
 
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include "physics.h"
 #include "globalVar.h"
 #include "textRenderer.h"
-#include "audio.h"
-#include <fstream>
-#include <cstdlib>
-#include <ctime>
-#include <set>
-
 #include "map.h"
 class Map;
+class EventHandler;
 class Game {
 private:
     SDL_Window *window;
-    int startX, startY, endX, endY;
     double angle = 0;
     bool isDragging = false;
     TextRenderer textRenderer;
     GameState gameState;
-
 
 public:
     Game();
@@ -40,13 +28,17 @@ public:
     bool isRunning();
     void render();
     void clean();
-    GameState getState();
+    GameState getState() const;
     void setState(GameState state);
-    static void resetDragging();
     void resetStat();
+    void setDragging(bool dragging) { isDragging = dragging; }
+    bool getDragging() { return isDragging; }
 
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static bool running;
     static Map* map;
+    int startX, startY, endX, endY;
 };
+
+#endif //GAME_H

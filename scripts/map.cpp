@@ -2,18 +2,15 @@
 // Created by Baka-tannn on 4/3/2025.
 //
 
-
+#include <ctime>
 #include "map.h"
 #include "textureLoader.h"
-#include "game.h"
-#include "ball.h"
 
-int Map::arr[MAP_ROWS][MAP_COLS] = {0};  // Khởi tạo tất cả các ô với giá trị 0
-std::set<std::pair<int, int>> Map::occupiedPositions; // Tập hợp các vị trí đã render object
-
+int Map::arr[MAP_ROWS][MAP_COLS] = {0};  // Array for map
+std::set<std::pair<int, int>> Map::occupiedPositions; // Position that has object rendered
 
 Map::Map() {
-    srand(time(nullptr));
+    srand(time(NULL));
 
     // Load texture
     tile1 = TextureLoader::loadTexture("resources/img/tile32_light.png");
@@ -22,10 +19,7 @@ Map::Map() {
     hole = TextureLoader::loadTexture("resources/img/hole.png");
 
     // Tile rect
-    src.x = 0;
-    src.y = 0;
-    src.w = TILE_SIZE;
-    src.h = TILE_SIZE;
+    src = {0, 0, TILE_SIZE, TILE_SIZE};
 
     spawnObjects();  // Rand object
 }
@@ -35,26 +29,21 @@ Map::~Map() {
         delete ball;
         ball = nullptr;
     }
-    SDL_DestroyTexture(tile1);
-    SDL_DestroyTexture(tile2);
-    SDL_DestroyTexture(blockTexture);
-    SDL_DestroyTexture(hole);
     resetMap();
 }
 
-// Kiểm tra vị trí đã có object nào chưa
+// Check if position is occupied
 bool Map::isOccupied(int x, int y) {
-    return Map::occupiedPositions.find({x, y}) != Map::occupiedPositions.end();
+    return occupiedPositions.find({x, y}) != occupiedPositions.end();
 }
 
-
-bool isBlocked(int arr[][30], int x, int y) { // Tránh bóng / lỗ bị bao 4 phía bởi block
-    return Map::isOccupied(x - 1, y) && Map::isOccupied(x + 1, y) &&
-           Map::isOccupied(x, y - 1) && Map::isOccupied(x, y + 1);
-
+// Prevent object from spawning at all 4 sides
+bool Map::isBlocked(int x, int y) {
+return isOccupied(x - 1, y) && isOccupied(x + 1, y) &&
+       isOccupied(x, y - 1) && isOccupied(x, y + 1);
 }
 
-// Hàm spawn block, hole và ball
+// Randomly spawn objects
 void Map::spawnObjects() {
     occupiedPositions.clear();
 
@@ -62,44 +51,46 @@ void Map::spawnObjects() {
     for (int i = 0; i < 15; i++) {
         int x, y;
         do {
-            x = (rand() % (MAP_COLS  - 1));  // Rand tọa độ
-            y = (rand() % (MAP_ROWS -1));  // Vì block 64x64 nên -1 để không tràn ra khỏi màn hình
+            x = (rand() % (MAP_COLS  - 1));
+            y = (rand() % (MAP_ROWS -1));  // 64x64
         } while (isOccupied(x, y) || isOccupied(x + 1, y) ||
-                 isOccupied(x, y + 1) || isOccupied(x + 1, y + 1)); // Kiểm tra xem đã có object nào tại 4 ô hình vuông chưa
+                 isOccupied(x, y + 1) || isOccupied(x + 1, y + 1)); // Check if 4 tiles are occupied
 
-        // Đánh dấu 4 ô đã có object
+        // Mark as occupied
         occupiedPositions.insert({x, y});
         occupiedPositions.insert({x + 1, y});
         occupiedPositions.insert({x, y + 1});
         occupiedPositions.insert({x + 1, y + 1});
 
-        arr[y][x] = 1;  // Lưu vào map
+        arr[y][x] = 1;
     }
 
-    // Spawn lỗ
+    // Spawn holes
     int holeX, holeY;
     do {
-        holeX = rand() % MAP_COLS;
-        holeY = rand() % MAP_ROWS;
-    } while (isOccupied(holeX, holeY) || isBlocked(arr, holeX, holeY) || holeX == 0 || holeY == 0 || holeX == MAP_COLS - 1 || holeY == MAP_ROWS - 1);
-    // Không spawn đè lên object khác / không bị block 4 hướng // không spawn ở biên
+        holeX = 1 + rand() % (MAP_COLS - 2); // Not spawn at the edge
+        holeY = 1 + rand() % (MAP_ROWS - 2);
+    } while (isOccupied(holeX, holeY) || isBlocked(holeX, holeY));
+
+    // Mark as occupied
     occupiedPositions.insert({holeX, holeY});
-    arr[holeY][holeX] = 2;  //
+    arr[holeY][holeX] = 2;
 
     // Spawn ball
     int ballX, ballY;
     do {
-        ballX = rand() % MAP_COLS;
-        ballY = rand() % MAP_ROWS;
-    } while (isOccupied(ballX, ballY) || isBlocked(arr, ballX, ballY) || ballX == 0 || ballY == 0 || ballX == MAP_COLS - 1 || ballY == MAP_ROWS - 1); // Như hole
+        ballX = 1 + rand() % (MAP_COLS - 2); // Not spawn at the edge
+        ballY = 1 + rand() % (MAP_ROWS - 2);
+    } while (isOccupied(ballX, ballY) || isBlocked(ballX, ballY));
+    // Mark as occupied
     occupiedPositions.insert({ballX, ballY});
-
+    // Create ball
     ball = new Ball(Vector(ballX * TILE_SIZE, ballY * TILE_SIZE));
 }
 
-// Vẽ map
-void Map::drawTile() {
-    // Vẽ nền
+// Draw map
+void Map::drawMap() {
+    // Draw tiles
     for (int i = 0; i < MAP_ROWS; i++) {
         for (int j = 0; j < MAP_COLS; j++) {
             dist.x = j * TILE_SIZE;
@@ -107,7 +98,6 @@ void Map::drawTile() {
             dist.w = TILE_SIZE;
             dist.h = TILE_SIZE;
 
-            // Ô cờ caro
             if ((i + j) % 2 == 0) {
                 TextureLoader::Draw(tile1, src, dist);
             } else {
@@ -116,19 +106,18 @@ void Map::drawTile() {
         }
     }
 
-    // Vẽ block và hole
     for (int i = 0; i < MAP_ROWS; i++) {
         for (int j = 0; j < MAP_COLS; j++) {
             dist.x = j * TILE_SIZE;
             dist.y = i * TILE_SIZE;
 
-            if (arr[i][j] == 1) { // Vẽ block
+            if (arr[i][j] == 1) { // Draw blocks
                 src.w = BLOCK_SIZE;
                 src.h = BLOCK_SIZE;
                 dist.w = BLOCK_SIZE;
                 dist.h = BLOCK_SIZE;
                 TextureLoader::Draw(blockTexture, src, dist);
-            } else if (arr[i][j] == 2) { // Vẽ hole
+            } else if (arr[i][j] == 2) { // Draw holes
                 src.w = TILE_SIZE;
                 src.h = TILE_SIZE;
                 dist.w = TILE_SIZE;
@@ -139,19 +128,12 @@ void Map::drawTile() {
     }
 }
 
-
-
-void resetOccupiedPositions() {
-    Map::occupiedPositions.clear();
-}
-
-void Map::resetMap() {
+void Map::resetMap() { // Reset map
     for (int i = 0; i < MAP_ROWS; i++) {
         for (int j = 0; j < MAP_COLS; j++) {
             arr[i][j] = 0;
         }
     }
-
     occupiedPositions.clear();
 
 }

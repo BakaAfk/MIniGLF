@@ -4,20 +4,26 @@
 
 #ifndef BALL_H
 #define BALL_H
-#pragma once
 #include "vector.h"
 class Ball
 {
 private:
     SDL_Texture *ball;
-public:
+    Vector velocity, position;
+    SDL_Rect src, dist;
     bool win = false;
-    Ball(Vector position);
+
+public:
+    Ball(Vector pos);
     ~Ball();
     void drawBall();
     void update();
-    Vector velocity, position;
-    SDL_Rect src, dist;
+    void setVelocity(const Vector& v) { velocity = v; }
+
+    const Vector& getPosition() const { return position; }
+    const Vector& getVelocity() const { return velocity; }
+    const SDL_Rect& getDist() const { return dist; }
+    bool isWin() const { return win; }
 };
 
 #endif //BALL_H

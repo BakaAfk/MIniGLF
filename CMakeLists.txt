@@ -12,8 +12,6 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/textureLoader.h
         scripts/game.h
         scripts/game.cpp
-        scripts/gameObject.h
-        scripts/gameObject.cpp
         scripts/physics.cpp
         scripts/physics.h
         scripts/ball.cpp
@@ -26,6 +24,8 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/textRenderer.cpp
         scripts/gameRenderer.h
         scripts/gameRenderer.cpp
+        scripts/eventHandler.h
+        scripts/eventHandler.cpp
 )
 
 # --- SDL2 SETUP ---

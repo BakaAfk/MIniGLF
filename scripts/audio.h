@@ -12,9 +12,8 @@ private:
     Mix_Music *audio;
 public:
     Audio(const char* fileName, int loop, int volume);
-    void StopAudio();
-    void PauseAudio();
-    void ResumeAudio();
+    static void PauseAudio();
+    static void ResumeAudio();
     static void PlaySFX(const char* fileName, int volume);
 };
 #endif //AUDIO_H
