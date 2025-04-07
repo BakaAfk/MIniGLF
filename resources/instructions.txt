@@ -1,0 +1,4 @@
+Drag the mouse to set direction and force.
+The power-up can help you break blocks along the ball's direction.
+Press P to toggle the power-up. You can only store one power-up at a time.
+Press M to mute/unmute the BGM.

@@ -7,38 +7,33 @@
 #include "textureLoader.h"
 #include "globalVar.h"
 
-// Tilte animation thingy
+// Global variables
 int GameRenderer::baseY = 200;
 double GameRenderer::time = 0;
 int GameRenderer::aniSpeed = 10;
 
 void GameRenderer::renderMainScreen() { // Render main screen
-    int textH, titleY;
+    int titleY;
     // Draw background
     SDL_Texture *bgTexture = TextureLoader::loadTexture("resources/img/bg1.png");
-    if (bgTexture) {
-        SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-        SDL_RenderCopy(Game::renderer, bgTexture, nullptr, &bgRect);
-        SDL_DestroyTexture(bgTexture);
-    }
+    SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    TextureLoader::DrawAsset(bgTexture, bgRect, 0);
     // Draw title and animation
     titleY = baseY + std::sin(time/M_PI) * 20;
     time += 0.5;
     SDL_Texture *titleTexture = TextureLoader::loadTexture("resources/img/title.png");
-    if (titleTexture) {
-        SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, titleY, 400, 100};
-        SDL_RenderCopy(Game::renderer, titleTexture, nullptr, &titleRect);
-        SDL_DestroyTexture(titleTexture);
-    }
+    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, titleY, 400, 100};
+    TextureLoader::DrawAsset(titleTexture, titleRect, 0);
 
     // Draw text
     renderTextBackground(SCREEN_WIDTH/2 - 200, 350 - 5, 400, TEXTH + 10, GRAY_BG);
-    TextRenderer::renderTextCenter(Game::renderer, "Press ENTER to Start", SCREEN_WIDTH/2, 350, 24, WHITE);
+    TextRenderer::renderTextCenter(Game::renderer, "Press ENTER to Start", SCREEN_WIDTH/2, 350, DEFAULT_FONT_SIZE, WHITE);
 
     renderTextBackground(SCREEN_WIDTH/2 - 200, 400 - 5, 400, TEXTH + 10, GRAY_BG);
     TextRenderer::renderTextCenter(Game::renderer, "Press ESC to Quit", SCREEN_WIDTH/2, 400, DEFAULT_FONT_SIZE, WHITE);
 
-    TextRenderer::renderText(Game::renderer, "Press M to mute/unmute BG music", SCREEN_WIDTH - 235, SCREEN_HEIGHT - 50, 15, BLACK);
+    renderTextBackground(SCREEN_WIDTH/2 - 200, 450 - 5, 400, TEXTH + 10, GRAY_BG);
+    TextRenderer::renderTextCenter(Game::renderer, "Press I for Instructions", SCREEN_WIDTH/2, 450, DEFAULT_FONT_SIZE, WHITE);
 }
 
 void GameRenderer::renderPlayingScreen(bool isDragging, Map *map, Ball* ball, int endX, int endY) { // Render playing screen
@@ -59,22 +54,33 @@ void GameRenderer::renderPlayingScreen(bool isDragging, Map *map, Ball* ball, in
     renderStats();
 }
 
+void GameRenderer::renderInstructions() {
+    SDL_Texture *bgTexture = TextureLoader::loadTexture("resources/img/bg1.png");
+    SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    TextureLoader::DrawAsset(bgTexture, bgRect, 0);
+
+    SDL_Texture *titleTexture = TextureLoader::loadTexture("resources/img/instructions.png");
+    SDL_Rect titleRect = {SCREEN_WIDTH / 2 - 200, 200, 400, 100};
+    TextureLoader::DrawAsset(titleTexture, titleRect, 0);
+
+    int y = 300;
+    for (const std::string& line : instructions) {
+        TextRenderer::renderTextCenter(Game::renderer, line, SCREEN_WIDTH / 2, y, DEFAULT_FONT_SIZE, BLACK);
+        y += 30;
+    }
+}
+
+
 void GameRenderer::renderPauseScreen() { // Render pause screen
     // Load bg
     SDL_Texture *bgTexture = TextureLoader::loadTexture("resources/img/bg1.png");
-    if (bgTexture) {
-        SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-        SDL_RenderCopy(Game::renderer, bgTexture, nullptr, &bgRect);
-        SDL_DestroyTexture(bgTexture);
-    }
+    SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    TextureLoader::DrawAsset(bgTexture, bgRect, 0);
 
     // Load pause title
     SDL_Texture *pauseTexture = TextureLoader::loadTexture("resources/img/pause.png");
-    if (pauseTexture) {
-        SDL_Rect pauseRect = {SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 400, 100};
-        SDL_RenderCopy(Game::renderer, pauseTexture, nullptr, &pauseRect);
-        SDL_DestroyTexture(pauseTexture);
-    }
+    SDL_Rect pauseRect = {SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 100, 400, 100};
+    TextureLoader::DrawAsset(pauseTexture, pauseRect, 0);
 
     // Render text
     GameRenderer::renderTextBackground(SCREEN_WIDTH/2 - 200, SCREEN_HEIGHT/2 + 50 - 5, 400, TEXTH + 10, GRAY_BG);
@@ -86,19 +92,13 @@ void GameRenderer::renderPauseScreen() { // Render pause screen
 void GameRenderer::renderGameOver() {
     // Load bg
     SDL_Texture *bgTexture = TextureLoader::loadTexture("resources/img/bg_end.png");
-    if (bgTexture) {
-        SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-        SDL_RenderCopy(Game::renderer, bgTexture, nullptr, &bgRect);
-        SDL_DestroyTexture(bgTexture);
-    }
+    SDL_Rect bgRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    TextureLoader::DrawAsset(bgTexture, bgRect, 0);
 
     // Load title
     SDL_Texture *gameOverTexture = TextureLoader::loadTexture("resources/img/gameover.png");
-    if (gameOverTexture) {
-        SDL_Rect gameOverRect = {SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 175, 400, 100};
-        SDL_RenderCopy(Game::renderer, gameOverTexture, nullptr, &gameOverRect);
-        SDL_DestroyTexture(gameOverTexture);
-    }
+    SDL_Rect gameOverRect = {SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 - 175, 400, 100};
+    TextureLoader::DrawAsset(gameOverTexture, gameOverRect, 0);
 
     // Game over text
     int textW, textH;
@@ -126,14 +126,16 @@ void GameRenderer::renderArrow(Ball* ball, int endX, int endY) { // Render arrow
     };
 
     // Draw arrow texture
-    SDL_Texture* arrowTexture = TextureLoader::loadTexture("resources/img/point.png");
-    if (arrowTexture) {
-        SDL_RenderCopyEx(Game::renderer, arrowTexture, nullptr, &arrowRect, angle, nullptr, SDL_FLIP_NONE);
-        SDL_DestroyTexture(arrowTexture);
+    if (isPowerUp) {
+        SDL_Texture* PUarrowTexture = TextureLoader::loadTexture("resources/img/pointPU.png");
+        TextureLoader::DrawAsset(PUarrowTexture, arrowRect, angle);
+    } else {
+        SDL_Texture* arrowTexture = TextureLoader::loadTexture("resources/img/point.png");
+        TextureLoader::DrawAsset(arrowTexture, arrowRect, angle);
     }
 }
 
-// render transparent background for text
+// Render transparent background for text
 void GameRenderer::renderTextBackground(int x, int y, int w, int h, SDL_Color color) {
     SDL_SetRenderDrawBlendMode(Game::renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(Game::renderer, color.r, color.g, color.b, color.a);
@@ -158,5 +160,10 @@ void GameRenderer::renderStats() { // Render game stats
     TTF_SizeText(TextRenderer::getFont(), avgStrokeText.c_str(), &textW, &textH);
     renderTextBackground(SCREEN_WIDTH - 200 - 5, 5, textW + 10, textH + 10, GRAY_BG);
     TextRenderer::renderText(Game::renderer, avgStrokeText, SCREEN_WIDTH - 200, 10, DEFAULT_FONT_SIZE, WHITE);
+
+    std::string powerUpText = "Power Up: " + std::to_string(havePowerUp);
+    TTF_SizeText(TextRenderer::getFont(), powerUpText.c_str(), &textW, &textH);
+    renderTextBackground(SCREEN_WIDTH - 115 - 5, SCREEN_HEIGHT - 50 - 5, textW + 10, textH + 10, GRAY_BG);
+    TextRenderer::renderText(Game::renderer, powerUpText, SCREEN_WIDTH - 115,SCREEN_HEIGHT - 50 , DEFAULT_FONT_SIZE, WHITE);
 }
 

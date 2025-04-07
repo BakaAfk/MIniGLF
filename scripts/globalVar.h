@@ -6,6 +6,9 @@
 #define GLOBALVAR_H
 
 #include <SDL.h>
+#include <string>
+#include <vector>
+
 // Global constants
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 640;
@@ -29,8 +32,12 @@ extern int totalStroke;
 extern double avgStroke;
 extern int mapCount;
 extern bool muteBG;
+extern bool havePowerUp;
+extern bool isPowerUp;
+extern std::vector<std::string> instructions;
 typedef enum GameState {
     START_SCREEN,
+    INSTRUCTIONS,
     PLAYING,
     PAUSE,
     GAME_OVER,

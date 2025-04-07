@@ -18,5 +18,8 @@ struct Vector
     {
         return Vector(x * n, y * n);
     }
-
+    bool operator== ( const Vector& v) const
+    {
+        return (x == v.x && y == v.y);
+    }
 };

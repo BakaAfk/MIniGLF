@@ -4,12 +4,11 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
-#pragma once
 #include <SDL_mixer.h>
 
 class Audio {
 private:
-    Mix_Music *audio;
+    Mix_Music *audio; // BGM
 public:
     Audio(const char* fileName, int loop, int volume);
     static void PauseAudio();

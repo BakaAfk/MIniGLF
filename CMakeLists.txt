@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(SDL_Yourmom)
+project(MiniGLF)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -8,7 +8,7 @@ add_executable(${PROJECT_NAME} scripts/main.cpp
         scripts/vector.h
         scripts/audio.cpp
         scripts/audio.h
-        scripts/textureLoadeer.cpp
+        scripts/textureLoader.cpp
         scripts/textureLoader.h
         scripts/game.h
         scripts/game.cpp

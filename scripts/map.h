@@ -11,7 +11,7 @@
 
 class Map {
 private:
-    SDL_Texture *blockTexture, *tile1, *tile2, *hole;
+    SDL_Texture *blockTexture, *tile1, *tile2, *hole, *powerup;
     Ball *ball;
     SDL_Rect src, dist;
 public:

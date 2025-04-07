@@ -9,5 +9,9 @@ int stroke = 0;
 int totalStroke = 0;
 double avgStroke = 0;
 int mapCount = 1;
+std::vector<std::string> instructions = {};
 bool muteBG = false;
-const char *TITLE = "Mini Golf beta v2.0";
+bool havePowerUp = false;
+bool isPowerUp = false;
+
+const char *TITLE = "MiniGLF made by Bakatannn";

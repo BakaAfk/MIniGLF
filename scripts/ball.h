@@ -18,8 +18,8 @@ public:
     ~Ball();
     void drawBall();
     void update();
-    void setVelocity(const Vector& v) { velocity = v; }
 
+    void setVelocity(const Vector& v) { velocity = v; }
     const Vector& getPosition() const { return position; }
     const Vector& getVelocity() const { return velocity; }
     const SDL_Rect& getDist() const { return dist; }

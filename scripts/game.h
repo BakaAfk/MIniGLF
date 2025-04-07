@@ -31,6 +31,7 @@ public:
     GameState getState() const;
     void setState(GameState state);
     void resetStat();
+
     void setDragging(bool dragging) { isDragging = dragging; }
     bool getDragging() { return isDragging; }
 

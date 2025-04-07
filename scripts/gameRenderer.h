@@ -16,6 +16,7 @@ private:
 public:
     static void renderMainScreen();
     static void renderPlayingScreen(bool isDragging, Map* map, Ball *ball, int endX, int endY);
+    static void renderInstructions();
     static void renderPauseScreen();
     static void renderGameOver();
     static void renderArrow(Ball* ball, int endX, int endY);
