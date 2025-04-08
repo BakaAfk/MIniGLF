@@ -1,5 +1,6 @@
 ## Clions Project
 cmake-build-debug/*
+cmake-build-release/*
 !cmake-build-debug/SDL2.dll
 # cmake/
 .idea/

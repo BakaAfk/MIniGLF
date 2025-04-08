@@ -25,7 +25,7 @@ SDL_Texture *TextureLoader::loadTexture(const char *fileName)
 void TextureLoader::DrawMapObject(SDL_Texture *texture, SDL_Rect src, SDL_Rect dist) // Draw map object
 {
     SDL_RenderCopy(Game::renderer, texture, &src, &dist);
-    // Not destroying texture here because it will re-use in Map::
+    // Not destroying texture here because it will re-use in Map spawn
     // Will be destroyed in Map destructor
 }
 
